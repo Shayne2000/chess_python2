@@ -39,13 +39,16 @@ screen.register_shape(r"2.0/image/White_KING.gif")
 screen.register_shape(r"2.0\image\Black_KING.gif")
 
 
+screen.register_shape(r"C:\Users\Lenovo\Downloads\Webp.net-resizeimage.gif")
+
+
 
 positions = {}
 
 yellow_square = t.Turtle()
 yellow_square.up()
 yellow_square.color('yellow')
-yellow_square.shape("square")
+yellow_square.shape(r"C:\Users\Lenovo\Downloads\Webp.net-resizeimage.gif")
 yellow_square.shapesize(4.5)
 yellow_square.speed(0)
 yellow_square.hideturtle()
