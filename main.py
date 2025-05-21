@@ -1,17 +1,17 @@
 import turtle as t
 
 class Chess_pieces (t.Turtle):
-    def __init__(self,x,y):
+    def __init__(self,x,y,color):
         t.Turtle.__init__(self)
         self.speed(0)
         self.up()
-        positions[f"{x},{y}"] = self
+        positions[f"{x},{y}"] = {"object":self,"color":color}
         self.goto(return_center_square(x,y))
         
         
 class King (Chess_pieces) :
     def __init__(self, x, y, color):
-        Chess_pieces.__init__(self,x,y)
+        Chess_pieces.__init__(self,x,y,color)
         if color == "w" :
             self.shape(r"2.0/image/White_KING.gif")
         elif color == "b" :
@@ -26,8 +26,9 @@ def return_center_square (x,y) :
     y = y*90+45-450
     return (x,y)
 
-turn = "w1"
+turn = {"target_color":"w","target_action":"check_what_to_move"}
 
+piece_in_action = None
 
 
 screen = t.Screen()
@@ -59,13 +60,23 @@ for tag in canvas.find_withtag(str(yellow_square)):
 def yellow_square_follow_pointer (x,y) :
     yellow_square.showturtle()
     x,y = return_cordinate(x,y)
-    x,y = return_center_square(x,y)
-    yellow_square.goto(x,y)
+    x1,y1 = return_center_square(x,y)
+    yellow_square.goto(x1,y1)
+    
+    for i in positions.keys() :    # check if touch a chess piece
+        check = f"{int(x)},{int(y)}"
+        # print(check,i)
+        # positions[i] --> {target_object,color}
+        if check == i :
+            if positions[i]['color'] == turn["target_color"] :
+                piece_in_action = positions[i]['object']
+
+                
+
     
 King(5,1,"w")
 King(5,8,"b")
 
-print(positions)
     
 screen.onclick(yellow_square_follow_pointer)
 
