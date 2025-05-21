@@ -29,6 +29,29 @@ class King (Chess_pieces) :
             return True
         else :
             return False
+        
+class Rook (Chess_pieces) :
+    def __init__(self, x, y, color):
+        Chess_pieces.__init__(self,x,y,color)
+        if color == "w" :
+            self.shape(r"2.0\image\White_rook.gif")
+        elif color == "b" :
+            self.shape(r"2.0\image\Black_rook.gif")
+    def check_move (self,xfrom,yfrom,xto,yto) :
+        # print(f"{xfrom},{yfrom} to {xto},{yto}")
+        # print('check move for rook activated')
+        print('x',xfrom == xto,', y',yfrom == yto)
+        if (xfrom == xto) ^ (yfrom == yto) :
+            
+            if f"{xto},{yto}" in positions :
+                positions[f"{xto},{yto}"]['object'].hideturtle()
+            
+            self.goto(return_center_square(xto,yto))
+            del positions[f"{xfrom},{yfrom}"]
+            positions[f"{xto},{yto}"] = {"object":self,"color":turn['target_color']}
+            return True
+        else :
+            return False
 
         
 
@@ -50,11 +73,14 @@ screen = t.Screen()
 screen.bgpic(r'2.0\image\board_rotate.gif')
 screen.setup(720,720)
 
-screen.register_shape(r"2.0/image/White_KING.gif")
-screen.register_shape(r"2.0\image\Black_KING.gif")
-
-
-screen.register_shape(r"C:\Users\Lenovo\Downloads\Webp.net-resizeimage.gif")
+for i in [r"2.0/image/White_KING.gif",r"2.0\image\Black_KING.gif",
+          r"2.0\image\White_rook.gif",r"2.0\image\Black_rook.gif",
+          r'2.0\image\Black_knight.gif',r'2.0\image\White_knight.gif',
+          r'2.0\image\Black_bishop.gif',r'2.0\image\White_bishop.gif',
+          r'2.0\image\Black_Queen.gif',r'2.0\image\White_Queen.gif',
+          r'2.0\image\Black_Pawn.gif',r'2.0\image\White_Pawn.gif',
+          r'2.0\image\yellowsquare_resize.gif'] :
+    screen.register_shape(i)
 
 
 
@@ -63,7 +89,7 @@ positions = {}
 yellow_square = t.Turtle()
 yellow_square.up()
 yellow_square.color('yellow')
-yellow_square.shape(r"C:\Users\Lenovo\Downloads\Webp.net-resizeimage.gif")
+yellow_square.shape(r"2.0\image\yellowsquare_resize.gif")
 yellow_square.shapesize(4.5)
 yellow_square.speed(0)
 yellow_square.hideturtle()
@@ -109,6 +135,10 @@ def yellow_square_follow_pointer (x,y) :
     
 King(5,1,"w")
 King(5,8,"b")
+Rook(1,1,'w')
+Rook(8,1,'w')
+Rook(1,8,'b')
+Rook(8,8,'b')
 
     
 screen.onclick(yellow_square_follow_pointer)
