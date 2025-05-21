@@ -108,27 +108,29 @@ def yellow_square_follow_pointer (x,y) :
     
     
     if turn["target_action"] == "check_what_to_move" :
-        for i in positions.keys() :    # check if touch a chess piece
-            check = f"{x},{y}"  # "x,y"
-            # print(check,i)
-            
+        check = f"{x},{y}"  # "x,y"
+        for i in positions :    # check if touch a chess piece
             if check == i :
                 if positions[i]['color'] == turn["target_color"] :# positions[i] --> {target_object,color}
                     piece_in_action = {"piece":positions[i]['object'],'position':(x,y)}
                     turn["target_action"] = "check_where_to_move"
                     # print(piece_in_action)
-    elif turn['target_action'] == "check_where_to_move" and (x,y) != piece_in_action['position'] :
+    elif turn['target_action'] == "check_where_to_move" :
         
-        xfrom,yfrom = piece_in_action['position']
-        condition = piece_in_action["piece"].check_move(xfrom,yfrom,x,y)
-        
-        if condition :
-            turn["target_action"] = 'check_what_to_move'
-            # print(piece_in_action,'goto',x,y)
-            if turn['target_color'] == "w" :
-                turn['target_color'] = 'b'
-            elif turn["target_color"] == 'b' :
-                turn["target_color"] = 'w'
+        if f"{x},{y}" in positions :
+            if positions[f"{x},{y}"]['color'] == turn["target_color"] :
+                piece_in_action = {"piece":positions[f"{x},{y}"]['object'],'position':(x,y)}
+        else :        
+            xfrom,yfrom = piece_in_action['position']
+            condition = piece_in_action["piece"].check_move(xfrom,yfrom,x,y)
+            
+            if condition :
+                turn["target_action"] = 'check_what_to_move'
+                # print(piece_in_action,'goto',x,y)
+                if turn['target_color'] == "w" :
+                    turn['target_color'] = 'b'
+                elif turn["target_color"] == 'b' :
+                    turn["target_color"] = 'w'
 
                 
 
