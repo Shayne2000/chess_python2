@@ -16,6 +16,11 @@ class King (Chess_pieces) :
             self.shape(r"2.0/image/White_KING.gif")
         elif color == "b" :
             self.shape(r"2.0\image\Black_KING.gif")
+    def check_move (self,xfrom,yfrom,xto,yto) :
+        print(f"{xfrom},{yfrom} to {xto},{yto}")
+        
+        # piece_in_action['']
+
         
 
 def return_cordinate (x,y) :
@@ -73,12 +78,16 @@ def yellow_square_follow_pointer (x,y) :
             
             if check == i :    
                 if positions[i]['color'] == turn["target_color"] :# positions[i] --> {target_object,color}
-                    piece_in_action = positions[i]['object']
+                    piece_in_action = {"piece":positions[i]['object'],'position':(x,y)}
                     turn["target_action"] = "check_where_to_move"
+                    # print(piece_in_action)
     elif turn['target_action'] == "check_where_to_move" :
         
+        xfrom,yfrom = piece_in_action['position']
+        piece_in_action["piece"].check_move(xfrom,yfrom,x,y)
+        
         turn["target_action"] = 'check_what_to_move'
-        print(piece_in_action,'goto',x,y)
+        # print(piece_in_action,'goto',x,y)
         if turn['target_color'] == "w" :
             turn['target_color'] = 'b'
         elif turn["target_color"] == 'b' :
