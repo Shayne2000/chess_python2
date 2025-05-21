@@ -17,9 +17,18 @@ class King (Chess_pieces) :
         elif color == "b" :
             self.shape(r"2.0\image\Black_KING.gif")
     def check_move (self,xfrom,yfrom,xto,yto) :
-        print(f"{xfrom},{yfrom} to {xto},{yto}")
+        # print(f"{xfrom},{yfrom} to {xto},{yto}")
         
-        # piece_in_action['']
+        if abs(xfrom-xto) <=1 and abs(yfrom-yto) <= 1 :
+            if f"{xto},{yto}" in positions :
+                positions[f"{xto},{yto}"]['object'].hideturtle()
+            
+            self.goto(return_center_square(xto,yto))
+            del positions[f"{xfrom},{yfrom}"]
+            positions[f"{xto},{yto}"] = {"object":self,"color":turn['target_color']}
+            return True
+        else :
+            return False
 
         
 
@@ -67,31 +76,33 @@ def yellow_square_follow_pointer (x,y) :
     
     yellow_square.showturtle()
     x,y = return_cordinate(x,y)
+    x,y = int(x),int(y)
     x1,y1 = return_center_square(x,y)
     yellow_square.goto(x1,y1)
     
     
     if turn["target_action"] == "check_what_to_move" :
         for i in positions.keys() :    # check if touch a chess piece
-            check = f"{int(x)},{int(y)}"  # "x,y"
+            check = f"{x},{y}"  # "x,y"
             # print(check,i)
             
-            if check == i :    
+            if check == i :
                 if positions[i]['color'] == turn["target_color"] :# positions[i] --> {target_object,color}
                     piece_in_action = {"piece":positions[i]['object'],'position':(x,y)}
                     turn["target_action"] = "check_where_to_move"
                     # print(piece_in_action)
-    elif turn['target_action'] == "check_where_to_move" :
+    elif turn['target_action'] == "check_where_to_move" and (x,y) != piece_in_action['position'] :
         
         xfrom,yfrom = piece_in_action['position']
-        piece_in_action["piece"].check_move(xfrom,yfrom,x,y)
+        condition = piece_in_action["piece"].check_move(xfrom,yfrom,x,y)
         
-        turn["target_action"] = 'check_what_to_move'
-        # print(piece_in_action,'goto',x,y)
-        if turn['target_color'] == "w" :
-            turn['target_color'] = 'b'
-        elif turn["target_color"] == 'b' :
-            turn["target_color"] = 'w'
+        if condition :
+            turn["target_action"] = 'check_what_to_move'
+            # print(piece_in_action,'goto',x,y)
+            if turn['target_color'] == "w" :
+                turn['target_color'] = 'b'
+            elif turn["target_color"] == 'b' :
+                turn["target_color"] = 'w'
 
                 
 
