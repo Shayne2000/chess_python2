@@ -58,18 +58,31 @@ for tag in canvas.find_withtag(str(yellow_square)):
     canvas.tag_lower(tag)
 
 def yellow_square_follow_pointer (x,y) :
+    global turn,piece_in_action
+    
     yellow_square.showturtle()
     x,y = return_cordinate(x,y)
     x1,y1 = return_center_square(x,y)
     yellow_square.goto(x1,y1)
     
-    for i in positions.keys() :    # check if touch a chess piece
-        check = f"{int(x)},{int(y)}"
-        # print(check,i)
-        # positions[i] --> {target_object,color}
-        if check == i :
-            if positions[i]['color'] == turn["target_color"] :
-                piece_in_action = positions[i]['object']
+    
+    if turn["target_action"] == "check_what_to_move" :
+        for i in positions.keys() :    # check if touch a chess piece
+            check = f"{int(x)},{int(y)}"  # "x,y"
+            # print(check,i)
+            
+            if check == i :    
+                if positions[i]['color'] == turn["target_color"] :# positions[i] --> {target_object,color}
+                    piece_in_action = positions[i]['object']
+                    turn["target_action"] = "check_where_to_move"
+    elif turn['target_action'] == "check_where_to_move" :
+        
+        turn["target_action"] = 'check_what_to_move'
+        print(piece_in_action,'goto',x,y)
+        if turn['target_color'] == "w" :
+            turn['target_color'] = 'b'
+        elif turn["target_color"] == 'b' :
+            turn["target_color"] = 'w'
 
                 
 
