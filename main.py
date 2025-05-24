@@ -40,11 +40,27 @@ class Rook (Chess_pieces) :
     def check_move (self,xfrom,yfrom,xto,yto) :
         # print(f"{xfrom},{yfrom} to {xto},{yto}")
         # print('check move for rook activated')
-        print('x',xfrom == xto,', y',yfrom == yto)
+        # print('x',xfrom == xto,', y',yfrom == yto)
         if (xfrom == xto) ^ (yfrom == yto) :
+            if xfrom == xto : #change in y
+                print('form',xfrom,yfrom,'to',xto,yto,'change Y')
+                for i in range(1,yto-yfrom) :
+                    print(f"{xfrom},{yfrom+i}")
+                    if f"{xfrom},{yfrom+i}" in positions :   #if find other color piece between, change x,y to and stop     have to check color
+                        positions[f"{xfrom},{yfrom+i}"]['object'].hideturtle()
+                        yto = yfrom+i
+                        print('bumb')
+                        break
+            elif yfrom == yto :#change in x
+                print('form',xfrom,yfrom,'to',xto,yto,'change X')
+                for i in range(1,xto-xfrom) :
+                    print(f"{xfrom+i},{yfrom}")
+                    if f"{xfrom+i},{yfrom}" in positions :   #if find other color piece between, change x,y to and stop
+                        positions[f"{xfrom+i},{yfrom}"]['object'].hideturtle()
+                        xto = xfrom+i
+                        print('bumb')
+                        break
             
-            if f"{xto},{yto}" in positions :
-                positions[f"{xto},{yto}"]['object'].hideturtle()
             
             self.goto(return_center_square(xto,yto))
             del positions[f"{xfrom},{yfrom}"]
@@ -117,9 +133,8 @@ def yellow_square_follow_pointer (x,y) :
                     # print(piece_in_action)
     elif turn['target_action'] == "check_where_to_move" :
         
-        if f"{x},{y}" in positions :
-            if positions[f"{x},{y}"]['color'] == turn["target_color"] :
-                piece_in_action = {"piece":positions[f"{x},{y}"]['object'],'position':(x,y)}
+        if f"{x},{y}" in positions and (positions[f"{x},{y}"]['color'] == turn["target_color"]): #left to right    so it wont error
+            piece_in_action = {"piece":positions[f"{x},{y}"]['object'],'position':(x,y)}
         else :        
             xfrom,yfrom = piece_in_action['position']
             condition = piece_in_action["piece"].check_move(xfrom,yfrom,x,y)
