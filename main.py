@@ -44,7 +44,8 @@ class Rook (Chess_pieces) :
         if (xfrom == xto) ^ (yfrom == yto) :
             if xfrom == xto : #change in y
                 print('form',xfrom,yfrom,'to',xto,yto,'change Y')
-                for i in range(1,yto-yfrom) :
+                range_to_check = yto-yfrom
+                for i in range(1,yto-yfrom,(range_to_check>0)-(range_to_check<0)) : 
                     print(f"{xfrom},{yfrom+i}")
                     if f"{xfrom},{yfrom+i}" in positions :   #if find other color piece between, change x,y to and stop     have to check color
                         positions[f"{xfrom},{yfrom+i}"]['object'].hideturtle()
