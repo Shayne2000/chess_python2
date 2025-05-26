@@ -43,27 +43,33 @@ class Rook (Chess_pieces) :
         # print('x',xfrom == xto,', y',yfrom == yto)
         if (xfrom == xto) ^ (yfrom == yto) :
             if xfrom == xto : #change in y
-                print('form',xfrom,yfrom,'to',xto,yto,'change Y')
+                # print('form',xfrom,yfrom,'to',xto,yto,'change Y')
                 range_to_check = yto-yfrom
                 step = (range_to_check > 0) - (range_to_check < 0) # 1/-1
                 for i in range(yfrom+step,range_to_check+yfrom+step,step) : 
-                    print(f"{xfrom},{i}")
+                    # print(f"{xfrom},{i}")
                     if f"{xfrom},{i}" in positions :   #if find other color piece between, change x,y to and stop     have to check color
-                        positions[f"{xfrom},{i}"]['object'].hideturtle()
-                        yto = i
-                        print('bumb')
-                        break
+                        if (positions[f"{xfrom},{i}"]['color'] != turn["target_color"]) :
+                            positions[f"{xfrom},{i}"]['object'].hideturtle()
+                            yto = i
+                            # print('bumb')
+                            break
+                        else :
+                            return False
             elif yfrom == yto :#change in x
-                print('form',xfrom,yfrom,'to',xto,yto,'change X')
+                # print('form',xfrom,yfrom,'to',xto,yto,'change X')
                 range_to_check = xto-xfrom
                 step = (range_to_check > 0) - (range_to_check < 0)
                 for i in range(step+xfrom,xfrom+step+range_to_check,step) :
-                    print(f"{i},{yfrom}")
+                    # print(f"{i},{yfrom}")
                     if f"{i},{yfrom}" in positions :   #if find other color piece between, change x,y to and stop
-                        positions[f"{i},{yfrom}"]['object'].hideturtle()
-                        xto = i
-                        print('bumb')
-                        break
+                        if positions[f"{i},{yfrom}"]['color'] != turn['target_color'] :
+                            positions[f"{i},{yfrom}"]['object'].hideturtle()
+                            xto = i
+                            # print('bumb')
+                            break
+                        else :
+                            return False
             
             
             self.goto(return_center_square(xto,yto))
