@@ -45,20 +45,23 @@ class Rook (Chess_pieces) :
             if xfrom == xto : #change in y
                 print('form',xfrom,yfrom,'to',xto,yto,'change Y')
                 range_to_check = yto-yfrom
-                for i in range(1,yto-yfrom,(range_to_check>0)-(range_to_check<0)) : 
-                    print(f"{xfrom},{yfrom+i}")
-                    if f"{xfrom},{yfrom+i}" in positions :   #if find other color piece between, change x,y to and stop     have to check color
-                        positions[f"{xfrom},{yfrom+i}"]['object'].hideturtle()
-                        yto = yfrom+i
+                step = (range_to_check > 0) - (range_to_check < 0) # 1/-1
+                for i in range(yfrom+step,range_to_check+yfrom+step,step) : 
+                    print(f"{xfrom},{i}")
+                    if f"{xfrom},{i}" in positions :   #if find other color piece between, change x,y to and stop     have to check color
+                        positions[f"{xfrom},{i}"]['object'].hideturtle()
+                        yto = i
                         print('bumb')
                         break
             elif yfrom == yto :#change in x
                 print('form',xfrom,yfrom,'to',xto,yto,'change X')
-                for i in range(1,xto-xfrom) :
-                    print(f"{xfrom+i},{yfrom}")
-                    if f"{xfrom+i},{yfrom}" in positions :   #if find other color piece between, change x,y to and stop
-                        positions[f"{xfrom+i},{yfrom}"]['object'].hideturtle()
-                        xto = xfrom+i
+                range_to_check = xto-xfrom
+                step = (range_to_check > 0) - (range_to_check < 0)
+                for i in range(step+xfrom,xfrom+step+range_to_check,step) :
+                    print(f"{i},{yfrom}")
+                    if f"{i},{yfrom}" in positions :   #if find other color piece between, change x,y to and stop
+                        positions[f"{i},{yfrom}"]['object'].hideturtle()
+                        xto = i
                         print('bumb')
                         break
             
