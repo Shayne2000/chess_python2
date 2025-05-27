@@ -78,6 +78,56 @@ class Rook (Chess_pieces) :
             return True
         else :
             return False
+        
+class Bishop (Chess_pieces) :
+    def __init__(self, x, y, color):
+        Chess_pieces.__init__(self,x,y,color)
+        if color == "w" :
+            self.shape(r"2.0\image\White_bishop.gif")
+        elif color == "b" :
+            self.shape(r"2.0\image\Black_bishop.gif")
+    def check_move (self,xfrom,yfrom,xto,yto) :
+        # print(f"{xfrom},{yfrom} to {xto},{yto}")
+        # print('check move for rook activated')
+        # print('x',xfrom == xto,', y',yfrom == yto)
+        m = (yto-yfrom)/(xto-xfrom)
+        if m in [-1,1] :
+            if xfrom == xto : #change in y
+                # print('form',xfrom,yfrom,'to',xto,yto,'change Y')
+                range_to_check = yto-yfrom
+                step = (range_to_check > 0) - (range_to_check < 0) # 1/-1
+                for i in range(yfrom+step,range_to_check+yfrom+step,step) : 
+                    # print(f"{xfrom},{i}")
+                    if f"{xfrom},{i}" in positions :   #if find other color piece between, change x,y to and stop     have to check color
+                        if (positions[f"{xfrom},{i}"]['color'] != turn["target_color"]) :
+                            positions[f"{xfrom},{i}"]['object'].hideturtle()
+                            yto = i
+                            # print('bumb')
+                            break
+                        else :
+                            return False
+            elif yfrom == yto :#change in x
+                # print('form',xfrom,yfrom,'to',xto,yto,'change X')
+                range_to_check = xto-xfrom
+                step = (range_to_check > 0) - (range_to_check < 0)
+                for i in range(step+xfrom,xfrom+step+range_to_check,step) :
+                    # print(f"{i},{yfrom}")
+                    if f"{i},{yfrom}" in positions :   #if find other color piece between, change x,y to and stop
+                        if positions[f"{i},{yfrom}"]['color'] != turn['target_color'] :
+                            positions[f"{i},{yfrom}"]['object'].hideturtle()
+                            xto = i
+                            # print('bumb')
+                            break
+                        else :
+                            return False
+            
+            
+            self.goto(return_center_square(xto,yto))
+            del positions[f"{xfrom},{yfrom}"]
+            positions[f"{xto},{yto}"] = {"object":self,"color":turn['target_color']}
+            return True
+        else :
+            return False
 
         
 
@@ -166,6 +216,10 @@ Rook(1,1,'w')
 Rook(8,1,'w')
 Rook(1,8,'b')
 Rook(8,8,'b')
+Bishop(3,1,'w')
+Bishop(6,1,'w')
+Bishop(3,8,'b')
+Bishop(6,8,'b')
 
     
 screen.onclick(yellow_square_follow_pointer)
