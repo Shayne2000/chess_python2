@@ -41,43 +41,37 @@ class Rook (Chess_pieces) :
         # print(f"{xfrom},{yfrom} to {xto},{yto}")
         # print('check move for rook activated')
         # print('x',xfrom == xto,', y',yfrom == yto)
-        if (xfrom == xto) ^ (yfrom == yto) :
-            if xfrom == xto : #change in y
-                # print('form',xfrom,yfrom,'to',xto,yto,'change Y')
-                range_to_check = yto-yfrom
-                step = (range_to_check > 0) - (range_to_check < 0) # 1/-1
-                for i in range(yfrom+step,range_to_check+yfrom+step,step) : 
-                    # print(f"{xfrom},{i}")
-                    if f"{xfrom},{i}" in positions :   #if find other color piece between, change x,y to and stop     have to check color
-                        if (positions[f"{xfrom},{i}"]['color'] != turn["target_color"]) :
-                            positions[f"{xfrom},{i}"]['object'].hideturtle()
-                            yto = i
-                            # print('bumb')
-                            break
-                        else :
-                            return False
-            elif yfrom == yto :#change in x
-                # print('form',xfrom,yfrom,'to',xto,yto,'change X')
-                range_to_check = xto-xfrom
-                step = (range_to_check > 0) - (range_to_check < 0)
-                for i in range(step+xfrom,xfrom+step+range_to_check,step) :
-                    # print(f"{i},{yfrom}")
-                    if f"{i},{yfrom}" in positions :   #if find other color piece between, change x,y to and stop
-                        if positions[f"{i},{yfrom}"]['color'] != turn['target_color'] :
-                            positions[f"{i},{yfrom}"]['object'].hideturtle()
-                            xto = i
-                            # print('bumb')
-                            break
-                        else :
-                            return False
-            
-            
+        if (xfrom == xto) ^ (yfrom == yto) : # a xor b
+            x_tochange = (xto-xfrom > 0) - (xto-xfrom < 0)
+            y_tochange = (yto-yfrom > 0) - (yto-yfrom < 0)
+            xtogo = xfrom + x_tochange
+            ytogo = yfrom + y_tochange
+            # print('x :',xtogo,'y :',ytogo)
+            # print('x :',(xtogo != xto),'y :',(ytogo != yto))
+            while (xtogo != xto) or (ytogo != yto) :
+                xtogo += x_tochange
+                ytogo += y_tochange
+                # print('x :',xtogo,'y :',ytogo)
+                if f'{xtogo},{ytogo}' in positions :
+                    # print('something on the way')
+                    if (positions[f"{xtogo},{ytogo}"]['color'] != turn["target_color"]) :
+                        positions[f"{xtogo},{ytogo}"]['object'].hideturtle()
+                        xto = xtogo
+                        yto = ytogo
+                        # print('bumb')
+                        break #not nessesary
+                    else :
+                        return False
+                
             self.goto(return_center_square(xto,yto))
             del positions[f"{xfrom},{yfrom}"]
             positions[f"{xto},{yto}"] = {"object":self,"color":turn['target_color']}
             return True
         else :
             return False
+            
+            
+            
         
 class Bishop (Chess_pieces) :
     def __init__(self, x, y, color):
@@ -98,7 +92,7 @@ class Bishop (Chess_pieces) :
             
             x_togo = xfrom + x_tochange
             y_togo = yfrom + y_tochange
-            while abs(x_togo) <=8 and abs(y_togo) <= 8 :
+            while x_togo != xto and y_togo != yto :
                 x_togo += x_tochange
                 y_togo += y_tochange
                 
