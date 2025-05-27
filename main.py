@@ -111,6 +111,35 @@ class Bishop (Chess_pieces) :
             return True
         else :
             return False
+        
+
+class Knight (Chess_pieces) :
+    def __init__(self, x, y, color):
+        Chess_pieces.__init__(self,x,y,color)
+        if color == "w" :
+            self.shape(r"2.0\image\White_knight.gif")
+        elif color == "b" :
+            self.shape(r"2.0\image\Black_knight.gif")
+    def check_move (self,xfrom,yfrom,xto,yto) :
+        # print(f"{xfrom},{yfrom} to {xto},{yto}")
+        # print('check move for bishop activated')
+        print(type(sorted({abs(yto-yfrom),abs(xto-xfrom)})))
+        
+        if sorted({abs(yto-yfrom),abs(xto-xfrom)}) == [1,2] :
+            # print('check move for bishop pass')
+            
+            if f'{xto},{yto}' in positions :
+                if (positions[f'{xto},{yto}']['color'] != turn["target_color"]) :
+                        positions[f'{xto},{yto}']['object'].hideturtle()
+                else :
+                    return False
+                    
+            self.goto(return_center_square(xto,yto))
+            del positions[f"{xfrom},{yfrom}"]
+            positions[f"{xto},{yto}"] = {"object":self,"color":turn['target_color']}
+            return True
+        else :
+            return False
 
         
 
@@ -203,6 +232,10 @@ Bishop(3,1,'w')
 Bishop(6,1,'w')
 Bishop(3,8,'b')
 Bishop(6,8,'b')
+Knight(2,1,'w')
+Knight(7,1,'w')
+Knight(2,8,'b')
+Knight(7,8,'b')
 
     
 screen.onclick(yellow_square_follow_pointer)
