@@ -88,40 +88,29 @@ class Bishop (Chess_pieces) :
             self.shape(r"2.0\image\Black_bishop.gif")
     def check_move (self,xfrom,yfrom,xto,yto) :
         # print(f"{xfrom},{yfrom} to {xto},{yto}")
-        # print('check move for rook activated')
-        # print('x',xfrom == xto,', y',yfrom == yto)
-        m = (yto-yfrom)/(xto-xfrom)
-        if m in [-1,1] :
-            if xfrom == xto : #change in y
-                # print('form',xfrom,yfrom,'to',xto,yto,'change Y')
-                range_to_check = yto-yfrom
-                step = (range_to_check > 0) - (range_to_check < 0) # 1/-1
-                for i in range(yfrom+step,range_to_check+yfrom+step,step) : 
-                    # print(f"{xfrom},{i}")
-                    if f"{xfrom},{i}" in positions :   #if find other color piece between, change x,y to and stop     have to check color
-                        if (positions[f"{xfrom},{i}"]['color'] != turn["target_color"]) :
-                            positions[f"{xfrom},{i}"]['object'].hideturtle()
-                            yto = i
+        # print('check move for bishop activated')
+        # print('not devied by 0 :',xto != xfrom,', m :',(yto-yfrom)/(xto-xfrom) in [-1,1])
+        
+        if (xto != xfrom) and ((yto-yfrom)/(xto-xfrom) in [-1,1]) :
+            # print('check move for bishop pass')
+            x_tochange = (xto - xfrom > 0) - (xto - xfrom < 0)
+            y_tochange = (yto - yfrom > 0) - (yto - yfrom < 0)
+            
+            x_togo = xfrom + x_tochange
+            y_togo = yfrom + y_tochange
+            while abs(x_togo) <=8 and abs(y_togo) <= 8 :
+                x_togo += x_tochange
+                y_togo += y_tochange
+                
+                if f'{x_togo},{y_togo}' in positions :
+                    if (positions[f'{x_togo},{y_togo}']['color'] != turn["target_color"]) :
+                            positions[f'{x_togo},{y_togo}']['object'].hideturtle()
+                            xto,yto = x_togo,y_togo
                             # print('bumb')
                             break
-                        else :
-                            return False
-            elif yfrom == yto :#change in x
-                # print('form',xfrom,yfrom,'to',xto,yto,'change X')
-                range_to_check = xto-xfrom
-                step = (range_to_check > 0) - (range_to_check < 0)
-                for i in range(step+xfrom,xfrom+step+range_to_check,step) :
-                    # print(f"{i},{yfrom}")
-                    if f"{i},{yfrom}" in positions :   #if find other color piece between, change x,y to and stop
-                        if positions[f"{i},{yfrom}"]['color'] != turn['target_color'] :
-                            positions[f"{i},{yfrom}"]['object'].hideturtle()
-                            xto = i
-                            # print('bumb')
-                            break
-                        else :
-                            return False
-            
-            
+                    else :
+                        return False
+                    
             self.goto(return_center_square(xto,yto))
             del positions[f"{xfrom},{yfrom}"]
             positions[f"{xto},{yto}"] = {"object":self,"color":turn['target_color']}
