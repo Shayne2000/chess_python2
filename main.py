@@ -44,8 +44,8 @@ class Rook (Chess_pieces) :
         if (xfrom == xto) ^ (yfrom == yto) : # a xor b
             x_tochange = (xto-xfrom > 0) - (xto-xfrom < 0)
             y_tochange = (yto-yfrom > 0) - (yto-yfrom < 0)
-            xtogo = xfrom + x_tochange
-            ytogo = yfrom + y_tochange
+            xtogo = xfrom
+            ytogo = yfrom
             # print('x :',xtogo,'y :',ytogo)
             # print('x :',(xtogo != xto),'y :',(ytogo != yto))
             while (xtogo != xto) or (ytogo != yto) :
@@ -90,8 +90,8 @@ class Bishop (Chess_pieces) :
             x_tochange = (xto - xfrom > 0) - (xto - xfrom < 0)
             y_tochange = (yto - yfrom > 0) - (yto - yfrom < 0)
             
-            x_togo = xfrom + x_tochange
-            y_togo = yfrom + y_tochange
+            x_togo = xfrom
+            y_togo = yfrom
             while x_togo != xto and y_togo != yto :
                 x_togo += x_tochange
                 y_togo += y_tochange
@@ -123,7 +123,7 @@ class Knight (Chess_pieces) :
     def check_move (self,xfrom,yfrom,xto,yto) :
         # print(f"{xfrom},{yfrom} to {xto},{yto}")
         # print('check move for bishop activated')
-        print(type(sorted({abs(yto-yfrom),abs(xto-xfrom)})))
+        # print(type(sorted({abs(yto-yfrom),abs(xto-xfrom)})))
         
         if sorted({abs(yto-yfrom),abs(xto-xfrom)}) == [1,2] :
             # print('check move for bishop pass')
@@ -141,6 +141,49 @@ class Knight (Chess_pieces) :
         else :
             return False
 
+
+class Queen (Chess_pieces) :
+    def __init__(self, x, y, color):
+        Chess_pieces.__init__(self,x,y,color)
+        if color == "w" :
+            self.shape(r"2.0\image\White_Queen.gif")
+        elif color == "b" :
+            self.shape(r"2.0\image\Black_Queen.gif")
+    def check_move (self,xfrom,yfrom,xto,yto) :
+        # print(f"{xfrom},{yfrom} to {xto},{yto}")
+        # print('check move for bishop activated')
+        # print('not devied by 0 :',xto != xfrom,', m :',(yto-yfrom)/(xto-xfrom) in [-1,1])
+        
+        if (xto == xfrom) or ((yto-yfrom)/(xto-xfrom) in [-1,1,0]) :
+            # print('check move for bishop pass')
+            x_tochange = (xto - xfrom > 0) - (xto - xfrom < 0)
+            y_tochange = (yto - yfrom > 0) - (yto - yfrom < 0)
+            
+            x_togo = xfrom
+            y_togo = yfrom
+            
+            # print(x_togo != xto,y_togo != yto)
+            while x_togo != xto or y_togo != yto :
+                x_togo += x_tochange
+                y_togo += y_tochange
+                
+                # print(x_togo,y_togo)
+                if f'{x_togo},{y_togo}' in positions :
+                    print('queen found something on the way')
+                    if (positions[f'{x_togo},{y_togo}']['color'] != turn["target_color"]) :
+                            positions[f'{x_togo},{y_togo}']['object'].hideturtle()
+                            xto,yto = x_togo,y_togo
+                            # print('bumb')
+                            break
+                    else :
+                        return False
+                    
+            self.goto(return_center_square(xto,yto))
+            del positions[f"{xfrom},{yfrom}"]
+            positions[f"{xto},{yto}"] = {"object":self,"color":turn['target_color']}
+            return True
+        else :
+            return False
         
 
 def return_cordinate (x,y) :
@@ -236,6 +279,8 @@ Knight(2,1,'w')
 Knight(7,1,'w')
 Knight(2,8,'b')
 Knight(7,8,'b')
+Queen(4,1,'w')
+Queen(4,8,'b')
 
     
 screen.onclick(yellow_square_follow_pointer)
