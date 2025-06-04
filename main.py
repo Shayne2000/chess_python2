@@ -185,6 +185,50 @@ class Queen (Chess_pieces) :
         else :
             return False
         
+        
+class Pawn (Chess_pieces) :
+    def __init__(self, x, y, color):
+        Chess_pieces.__init__(self,x,y,color)
+        if color == "w" :
+            self.shape(r"2.0\image\White_Pawn.gif")
+            self.direction = 1
+        elif color == "b" :
+            self.shape(r"2.0\image\Black_Pawn.gif")
+            self.direction = -1
+        self.initial_move = True
+    def check_move (self,xfrom,yfrom,xto,yto) :
+        # print(f"{xfrom},{yfrom} to {xto},{yto}")
+        
+        # print((yto-yfrom),(self.direction*2))
+        if (abs(xfrom-xto) <= 1) and (yto-yfrom <= self.direction*2) :#
+            # print('first pawn range in condition')
+            if xfrom-xto == 0 :#
+                # print('pawn moving straght')
+                if f'{xfrom},{yfrom + self.direction}' in positions or f"{xto},{yto}" in positions :#
+                    print('pawn have something on the way')
+                    return False
+                else :#
+                    # print('pawn doesnt have anything on the way')
+                    #print((yto-yfrom == self.direction*2),(yfrom!=int(4.5-(self.direction*2.5))))
+                    if yto - yfrom == self.direction*2 and (yfrom!=int(4.5-(self.direction*2.5))) :#
+                        #print('false na')
+                        return False
+                        
+            
+            elif (xfrom-xto != 0) and (yto-yfrom == self.direction):
+                print('pawn isnt moving straght')
+                if f"{xto},{yto}" in positions :
+                    positions[f"{xto},{yto}"]['object'].hideturtle()
+                else :
+                    return False
+            
+            self.goto(return_center_square(xto,yto))
+            
+            del positions[f"{xfrom},{yfrom}"]
+            positions[f"{xto},{yto}"] = {"object":self,"color":turn['target_color']}
+            return True
+        else :
+            return False
 
 def return_cordinate (x,y) :
     return(x//90+5,y//90+5)
@@ -281,6 +325,10 @@ Knight(2,8,'b')
 Knight(7,8,'b')
 Queen(4,1,'w')
 Queen(4,8,'b')
+
+for i in range(8) :
+    Pawn(i+1,2,'w')
+    Pawn(i+1,7,'b')
 
     
 screen.onclick(yellow_square_follow_pointer)
