@@ -199,18 +199,18 @@ class Pawn (Chess_pieces) :
     def check_move (self,xfrom,yfrom,xto,yto) :
         # print(f"{xfrom},{yfrom} to {xto},{yto}")
         
-        # print((yto-yfrom),(self.direction*2))
-        if (abs(xfrom-xto) <= 1) and (yto-yfrom <= self.direction*2) :#
+        # print(abs(yto-yfrom)<=1,(self.direction*2)>=yto-yfrom)
+        if (abs(xfrom-xto) <= 1) and ((yto-yfrom)*self.direction <= 2) :#
             # print('first pawn range in condition')
             if xfrom-xto == 0 :#
                 # print('pawn moving straght')
                 if f'{xfrom},{yfrom + self.direction}' in positions or f"{xto},{yto}" in positions :#
-                    print('pawn have something on the way')
+                    # print('pawn have something on the way')
                     return False
                 else :#
                     # print('pawn doesnt have anything on the way')
                     #print((yto-yfrom == self.direction*2),(yfrom!=int(4.5-(self.direction*2.5))))
-                    if yto - yfrom == self.direction*2 and (yfrom!=int(4.5-(self.direction*2.5))) :#
+                    if yto - yfrom == self.direction*2 and (yfrom!=int(4.5-(self.direction*2.5))) :#cd
                         #print('false na')
                         return False
                         
