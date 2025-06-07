@@ -16,6 +16,8 @@ class King (Chess_pieces) :
             self.shape(r"2.0/image/White_KING.gif")
         elif color == "b" :
             self.shape(r"2.0\image\Black_KING.gif")
+    def __str__ (self) :
+        return 'k'
     def check_move (self,xfrom,yfrom,xto,yto) :
         # print(f"{xfrom},{yfrom} to {xto},{yto}")
         
@@ -37,6 +39,8 @@ class Rook (Chess_pieces) :
             self.shape(r"2.0\image\White_rook.gif")
         elif color == "b" :
             self.shape(r"2.0\image\Black_rook.gif")
+    def __str__ (self) :
+        return 'r'
     def check_move (self,xfrom,yfrom,xto,yto) :
         # print(f"{xfrom},{yfrom} to {xto},{yto}")
         # print('check move for rook activated')
@@ -80,6 +84,8 @@ class Bishop (Chess_pieces) :
             self.shape(r"2.0\image\White_bishop.gif")
         elif color == "b" :
             self.shape(r"2.0\image\Black_bishop.gif")
+    def __str__ (self) :
+        return 'b'        
     def check_move (self,xfrom,yfrom,xto,yto) :
         # print(f"{xfrom},{yfrom} to {xto},{yto}")
         # print('check move for bishop activated')
@@ -120,6 +126,8 @@ class Knight (Chess_pieces) :
             self.shape(r"2.0\image\White_knight.gif")
         elif color == "b" :
             self.shape(r"2.0\image\Black_knight.gif")
+    def __str__ (self) :
+        return 'n'
     def check_move (self,xfrom,yfrom,xto,yto) :
         # print(f"{xfrom},{yfrom} to {xto},{yto}")
         # print('check move for bishop activated')
@@ -149,6 +157,8 @@ class Queen (Chess_pieces) :
             self.shape(r"2.0\image\White_Queen.gif")
         elif color == "b" :
             self.shape(r"2.0\image\Black_Queen.gif")
+    def __str__ (self) :
+        return 'q'
     def check_move (self,xfrom,yfrom,xto,yto) :
         # print(f"{xfrom},{yfrom} to {xto},{yto}")
         # print('check move for bishop activated')
@@ -196,6 +206,8 @@ class Pawn (Chess_pieces) :
             self.shape(r"2.0\image\Black_Pawn.gif")
             self.direction = -1
         self.initial_move = True
+    def __str__ (self) :
+        return 'p'
     def check_move (self,xfrom,yfrom,xto,yto) :
         # print(f"{xfrom},{yfrom} to {xto},{yto}")
         
@@ -246,7 +258,7 @@ piece_in_action = None
 screen = t.Screen()
 
 screen.bgpic(r'2.0\image\board_rotate.gif')
-screen.setup(720,720)
+screen.setup(820,720)
 
 for i in [r"2.0/image/White_KING.gif",r"2.0\image\Black_KING.gif",
           r"2.0\image\White_rook.gif",r"2.0\image\Black_rook.gif",
@@ -257,6 +269,11 @@ for i in [r"2.0/image/White_KING.gif",r"2.0\image\Black_KING.gif",
           r'2.0\image\yellowsquare_resize.gif'] :
     screen.register_shape(i)
 
+button = t.Turtle()
+button.shape('square')
+button.speed(0)
+button.up()
+button.goto(385,315)
 
 
 positions = {}
@@ -267,7 +284,7 @@ yellow_square.color('yellow')
 yellow_square.shape(r"2.0\image\yellowsquare_resize.gif")
 yellow_square.shapesize(4.5)
 yellow_square.speed(0)
-yellow_square.hideturtle()
+# yellow_square.hideturtle()
 canvas = screen.getcanvas()
 for tag in canvas.find_withtag(str(yellow_square)):
     canvas.tag_lower(tag)
@@ -275,36 +292,44 @@ for tag in canvas.find_withtag(str(yellow_square)):
 def yellow_square_follow_pointer (x,y) :
     global turn,piece_in_action
     
-    yellow_square.showturtle()
-    x,y = return_cordinate(x,y)
-    x,y = int(x),int(y)
-    x1,y1 = return_center_square(x,y)
-    yellow_square.goto(x1,y1)
     
+
     
-    if turn["target_action"] == "check_what_to_move" :
-        check = f"{x},{y}"  # "x,y"
-        for i in positions :    # check if touch a chess piece
-            if check == i :
-                if positions[i]['color'] == turn["target_color"] :# positions[i] --> {target_object,color}
-                    piece_in_action = {"piece":positions[i]['object'],'position':(x,y)}
-                    turn["target_action"] = "check_where_to_move"
-                    # print(piece_in_action)
-    elif turn['target_action'] == "check_where_to_move" :
+    if abs(x) <= 360 and abs(y) <= abs(360) :
+        # yellow_square.showturtle()
+        x,y = return_cordinate(x,y)
+        x,y = int(x),int(y)
+        x1,y1 = return_center_square(x,y)
+        yellow_square.goto(x1,y1)
         
-        if f"{x},{y}" in positions and (positions[f"{x},{y}"]['color'] == turn["target_color"]): #left to right    so it wont error
-            piece_in_action = {"piece":positions[f"{x},{y}"]['object'],'position':(x,y)}
-        else :        
-            xfrom,yfrom = piece_in_action['position']
-            condition = piece_in_action["piece"].check_move(xfrom,yfrom,x,y)
+        # print(positions[f'{x},{y}'])
+        
+        
+        if turn["target_action"] == "check_what_to_move" :
+            check = f"{x},{y}"  # "x,y"
+            for i in positions :    # check if touch a chess piece
+                if check == i :
+                    if positions[i]['color'] == turn["target_color"] :# positions[i] --> {target_object,color}
+                        piece_in_action = {"piece":positions[i]['object'],'position':(x,y)}
+                        turn["target_action"] = "check_where_to_move"
+                        # print(piece_in_action)
+        elif turn['target_action'] == "check_where_to_move" :
             
-            if condition :
-                turn["target_action"] = 'check_what_to_move'
-                # print(piece_in_action,'goto',x,y)
-                if turn['target_color'] == "w" :
-                    turn['target_color'] = 'b'
-                elif turn["target_color"] == 'b' :
-                    turn["target_color"] = 'w'
+            if f"{x},{y}" in positions and (positions[f"{x},{y}"]['color'] == turn["target_color"]): #left to right    so it wont error
+                piece_in_action = {"piece":positions[f"{x},{y}"]['object'],'position':(x,y)}
+            else :        
+                xfrom,yfrom = piece_in_action['position']
+                condition = piece_in_action["piece"].check_move(xfrom,yfrom,x,y)
+                
+                if condition :
+                    turn["target_action"] = 'check_what_to_move'
+                    # print(piece_in_action,'goto',x,y)
+                    if turn['target_color'] == "w" :
+                        turn['target_color'] = 'b'
+                    elif turn["target_color"] == 'b' :
+                        turn["target_color"] = 'w'
+    elif x > 360 and x < 410 and y < 360 and y > 270 :
+        print_fen()
 
                 
 
@@ -329,7 +354,33 @@ Queen(4,8,'b')
 for i in range(8) :
     Pawn(i+1,2,'w')
     Pawn(i+1,7,'b')
-
+    
+def print_fen () :
+    position_dict = positions
+    
+    fen = ""
+    for j in range(8,0,-1) :
+        n = 0
+        for i in range(1,9) :
+            if f'{i},{j}' in position_dict :
+                if n != 0 :
+                    fen += str(n)
+                track = position_dict[f'{i},{j}']
+                if track['color'] == 'w' :
+                    fen += track['object'].__str__()[0].upper()
+                else :
+                    fen +=  track['object'].__str__()[0]
+                # fen += 'y'
+                n = 0
+            else :
+                n += 1
+        if n != 0 :
+            fen += str(n)
+        fen += '/'
+    fen = fen[:-1]
+    fen += " "+turn['target_color']+' - - 0 2'
+    print(fen)
+                
     
 screen.onclick(yellow_square_follow_pointer)
 
