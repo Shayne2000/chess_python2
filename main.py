@@ -1,4 +1,9 @@
 import turtle as t
+from selenium import webdriver
+from selenium.webdriver.chrome.service import Service
+from selenium.webdriver.common.by import By
+from selenium.webdriver.chrome.options import Options
+import time
 
 class Chess_pieces (t.Turtle):
     def __init__(self,x,y,color):
@@ -329,9 +334,10 @@ def yellow_square_follow_pointer (x,y) :
                     elif turn["target_color"] == 'b' :
                         turn["target_color"] = 'w'
     elif x > 360 and x < 410 and y < 360 and y > 270 :
-        print_fen()
+        scraping()
 
                 
+charector_to_number_dict = {'a':1,'b':2,'c':3,'d':4,'e':5,'f':6,'g':7,'h':8}
 
     
 King(5,1,"w")
@@ -355,32 +361,53 @@ for i in range(8) :
     Pawn(i+1,2,'w')
     Pawn(i+1,7,'b')
     
-def print_fen () :
+def scraping () :
     position_dict = positions
     
-    fen = ""
+    url = "https://nextchessmove.com//?fen="
     for j in range(8,0,-1) :
         n = 0
         for i in range(1,9) :
             if f'{i},{j}' in position_dict :
                 if n != 0 :
-                    fen += str(n)
+                    url += str(n)
                 track = position_dict[f'{i},{j}']
                 if track['color'] == 'w' :
-                    fen += track['object'].__str__()[0].upper()
+                    url += track['object'].__str__()[0].upper()
                 else :
-                    fen +=  track['object'].__str__()[0]
+                    url +=  track['object'].__str__()[0]
                 # fen += 'y'
                 n = 0
             else :
                 n += 1
         if n != 0 :
-            fen += str(n)
-        fen += '/'
-    fen = fen[:-1]
-    fen += " "+turn['target_color']+' - - 0 2'
-    print(fen)
-                
+            url += str(n)
+        url += '/'
+    url = url[:-1]
+    url += "%20"+turn['target_color']+r'%20-%20-%200%202'
+    # print(fen)
+    
+    service = Service(executable_path='2.0/chromedriver.exe',log_output=0)
+    option = Options()
+    option.add_argument('--headless')
+    option.add_argument('--log-level=3') # 0 = all, 1 = info, 2 = warning, 3 = error 
+    driver = webdriver.Chrome(service=service,options=option)
+    
+    driver.get(url)
+    
+    calculate_button = driver.find_element(By.XPATH,"//button[text()='Calculate Next Move']")
+    calculate_button.click()
+    
+    time.sleep(7)
+    
+    the_move = driver.find_elements(By.XPATH,"//button[@class='link']")[0].text
+    
+    driver.quit()
+    
+    print(the_move)
+    # print('x =',charector_to_number_dict[the_move[0]],' y =',the_move[1])
+    
+
     
 screen.onclick(yellow_square_follow_pointer)
 
