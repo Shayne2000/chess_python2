@@ -279,6 +279,7 @@ button.shape('square')
 button.speed(0)
 button.up()
 button.goto(385,315)
+button.color('green')
 
 
 positions = {}
@@ -362,6 +363,8 @@ for i in range(8) :
     Pawn(i+1,7,'b')
     
 def scraping () :
+    button.color('red')
+    
     position_dict = positions
     
     url = "https://nextchessmove.com//?fen="
@@ -387,13 +390,23 @@ def scraping () :
     url += "%20"+turn['target_color']+r'%20-%20-%200%202'
     # print(fen)
     
-    service = Service(executable_path='2.0/chromedriver.exe',log_output=0)
+    service = Service(executable_path='2.0/chromedriver.exe')
     option = Options()
     option.add_argument('--headless')
     option.add_argument('--log-level=3') # 0 = all, 1 = info, 2 = warning, 3 = error 
+    option.add_experimental_option('excludeSwitches', ['enable-logging'])
     driver = webdriver.Chrome(service=service,options=option)
     
     driver.get(url)
+    
+    setting_button = driver.find_elements(By.XPATH, '//*[@id="ncm-main"]/div/div[1]/div[1]/div[2]/div[3]/div/div[2]/div[2]/button')
+    setting_button[0].click()
+    
+    format_checkbox = driver.find_elements(By.XPATH,'/html/body/div[9]/div/div/div[2]/div[3]/label/input')
+    format_checkbox[0].click()
+    
+    close_setting_button = driver.find_element(By.XPATH,'//button[@class="p-2 -mx-2"]')
+    close_setting_button.click()
     
     calculate_button = driver.find_element(By.XPATH,"//button[text()='Calculate Next Move']")
     calculate_button.click()
@@ -406,6 +419,9 @@ def scraping () :
     
     print(the_move)
     # print('x =',charector_to_number_dict[the_move[0]],' y =',the_move[1])
+    
+    
+    button.color('green')
     
 
     
