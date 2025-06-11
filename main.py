@@ -233,7 +233,7 @@ class Pawn (Chess_pieces) :
                         
             
             elif (xfrom-xto != 0) and (yto-yfrom == self.direction):
-                print('pawn isnt moving straght')
+                # print('pawn isnt moving straght')
                 if f"{xto},{yto}" in positions :
                     positions[f"{xto},{yto}"]['object'].hideturtle()
                 else :
@@ -322,7 +322,7 @@ def yellow_square_follow_pointer (x,y) :
         elif turn['target_action'] == "check_where_to_move" :
             
             if f"{x},{y}" in positions and (positions[f"{x},{y}"]['color'] == turn["target_color"]): #left to right    so it wont error
-                piece_in_action = {"piece":positions[f"{x},{y}"]['object'],'position':(x,y)}
+                piece_in_action = {"piece":positions[f"{x},{y}"]['object'],'position':(x,y)} #reselect if click the same color twice
             else :        
                 xfrom,yfrom = piece_in_action['position']
                 condition = piece_in_action["piece"].check_move(xfrom,yfrom,x,y)
@@ -413,12 +413,33 @@ def scraping () :
     
     time.sleep(7)
     
-    the_move = driver.find_elements(By.XPATH,"//button[@class='link']")[0].text
+    the_move = list(driver.find_elements(By.XPATH,"//button[@class='link']")[0].text)
+    # for i in the_move :
+    #     print('i :',i,'type :',type(i))
+    the_move[0] = charector_to_number_dict[the_move[0]]
+    the_move[1] = int(the_move[1])
+    the_move[2] = charector_to_number_dict[the_move[2]]
+    the_move[3] = int(the_move[3])
     
     driver.quit()
     
-    print(the_move)
-    # print('x =',charector_to_number_dict[the_move[0]],' y =',the_move[1])
+    # print(the_move)
+    # print('piece =',position_dict[f'{[the_move[0]]},{the_move[1]}']['object'].__str__(),' goto :',charector_to_number_dict[the_move[2]],the_move[3])
+    
+    if f"{the_move[2]},{the_move[3]}" in positions :
+        positions[f"{the_move[2]},{the_move[3]}"]['object'].hideturtle()
+    
+    object = position_dict[f'{the_move[0]},{the_move[1]}']['object'].goto(return_center_square(the_move[2],the_move[3]))
+            
+    del positions[f"{the_move[0]},{the_move[1]}"]
+    positions[f"{the_move[2]},{the_move[3]}"] = {"object":object,"color":turn['target_color']}
+    
+    turn["target_action"] = 'check_what_to_move'
+    # print(piece_in_action,'goto',x,y)
+    if turn['target_color'] == "w" :
+        turn['target_color'] = 'b'
+    elif turn["target_color"] == 'b' :
+        turn["target_color"] = 'w'    
     
     
     button.color('green')
